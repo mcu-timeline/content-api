@@ -1,0 +1,11 @@
+type Query {
+  timeline: [Movie]
+}
+
+type Movie {
+  id: String!
+  name: String!
+  duration: String!
+}
+
+
