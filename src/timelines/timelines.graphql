@@ -1,5 +1,5 @@
 type Query {
-  timeline: [Movie]
+  timeline(movieName: String): [Movie]
 }
 
 type Movie {

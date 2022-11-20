@@ -9,7 +9,7 @@
 /* eslint-disable */
 
 export interface IQuery {
-    timeline(): Nullable<Nullable<Movie>[]> | Promise<Nullable<Nullable<Movie>[]>>;
+    timeline(movieName?: Nullable<string>): Nullable<Nullable<Movie>[]> | Promise<Nullable<Nullable<Movie>[]>>;
 }
 
 export interface Movie {

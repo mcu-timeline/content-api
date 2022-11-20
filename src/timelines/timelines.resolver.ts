@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Query, Resolver } from '@nestjs/graphql';
+import { Query, Resolver, Args } from '@nestjs/graphql';
 
 import { Movie } from '../graphql.schema';
 import { TimelinesGuard } from './timelines.guard';
@@ -11,7 +11,7 @@ export class TimelinesResolver {
 
   @Query('timeline')
   @UseGuards(TimelinesGuard)
-  async getRates(): Promise<Movie[]> {
-    return this.timelinesService.getTimeline();
+  async getTimeline(@Args('movieName') movieName: string): Promise<Movie[]> {
+    return this.timelinesService.getTimeline(movieName);
   }
 }
