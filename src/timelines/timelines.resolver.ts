@@ -11,7 +11,9 @@ export class TimelinesResolver {
 
   @Query('timeline')
   @UseGuards(TimelinesGuard)
-  async getTimeline(@Args('movieName') movieName: string): Promise<Movie[]> {
-    return this.timelinesService.getTimeline(movieName);
+  async getTimeline(
+    @Args('currentlyWatching') currentlyWatching: string,
+  ): Promise<Movie[]> {
+    return this.timelinesService.getTimeline(currentlyWatching);
   }
 }

@@ -17,18 +17,20 @@ export class TimelinesService {
     const result = await this.neo4j.query<{ name: string }>(query, {
       name: movieName,
     });
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const movies: Movie[] = result.records[0]._fields[0].segments.map(
-      (segment) => {
-        return {
-          id: segment.start.elementId,
-          name: segment.start.properties.title,
-          duration: segment.start.properties.duration,
-        };
-      },
-    );
-    console.log(JSON.stringify(movies, null, 2));
+
+    const record = result.records[0];
+
+    if (!record) {
+      throw new Error('Movie not found');
+    }
+
+    const movies: Movie[] = record.get(0).segments.map((segment) => {
+      return {
+        id: segment.start.elementId,
+        name: segment.start.properties.title,
+        duration: segment.start.properties.duration,
+      };
+    });
 
     return movies;
   }

@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import neo4j, { Driver } from 'neo4j-driver';
+import { Config } from 'src/config';
 
 @Injectable()
 export class Neo4jClient {
   public client: Driver;
 
-  constructor() {
-    const uri = '';
-    const user = 'neo4j';
-    const password = '';
+  constructor(private configService: ConfigService<Config>) {
+    const uri = this.configService.get('NEO4J_URI');
+    const user = this.configService.get('NEO4J_USER');
+    const password = this.configService.get('NEO4J_PASSWORD');
 
     this.client = neo4j.driver(uri, neo4j.auth.basic(user, password));
   }
