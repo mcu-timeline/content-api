@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Query, Resolver, Args } from '@nestjs/graphql';
+import { Query, Resolver, Args, ResolveReference } from '@nestjs/graphql';
 
 import { Movie } from '../graphql.schema';
 import { TimelinesGuard } from './timelines.guard';
@@ -15,5 +15,13 @@ export class TimelinesResolver {
     @Args('currentlyWatching') currentlyWatching: string,
   ): Promise<Movie[]> {
     return this.timelinesService.getTimeline(currentlyWatching);
+  }
+
+  @ResolveReference()
+  resolveReference(reference: {
+    __typename: string;
+    currentlyWatching: string;
+  }) {
+    return this.timelinesService.getTimeline(reference.currentlyWatching);
   }
 }

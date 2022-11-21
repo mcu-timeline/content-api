@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import neo4j, { Driver } from 'neo4j-driver';
+import neo4j, {
+  Driver,
+  QueryResult,
+  ResultSummary,
+  Result,
+} from 'neo4j-driver';
 import { Config } from 'src/config';
 
 @Injectable()

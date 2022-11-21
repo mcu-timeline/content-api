@@ -2,7 +2,7 @@ type Query {
   timeline(currentlyWatching: String): [Movie]
 }
 
-type Movie {
+type Movie @key(fields: "id") {
   id: String!
   name: String!
   duration: String!
