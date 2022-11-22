@@ -17,7 +17,7 @@ import { config } from './config';
       driver: ApolloFederationDriver,
       typePaths: ['./**/*.graphql'],
       definitions: {
-        path: join(process.cwd(), 'src/graphql.schema.ts'),
+        path: join(__dirname, 'graphql.schema.ts'),
       },
     }),
     ConfigModule.forRoot({
