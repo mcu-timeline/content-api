@@ -6,9 +6,9 @@ services:
       dockerfile: Dockerfile
     environment:
       PORT: "3001"
-      NEO4J_URI: "neo4j+s://6d72f7db.databases.neo4j.io"
-      NEO4J_USER: "neo4j"
-      NEO4J_PASSWORD: "rNjLtrPvXbW6SjBTUiePdglMk12235VJnl11EyPfoik"
+      NEO4J_URI: ""
+      NEO4J_USER: ""
+      NEO4J_PASSWORD: ""
     ports:
       - "3001:3001"
     command: yarn start:dev
