@@ -4,11 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      PORT: "3001"
-      NEO4J_URI: ""
-      NEO4J_USER: ""
-      NEO4J_PASSWORD: ""
+    container_name: content-api
+    env_file:
+      - .env
     ports:
       - "3001:3001"
-    command: yarn start:dev
