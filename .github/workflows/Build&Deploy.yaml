@@ -2,7 +2,7 @@ name: Build & Push to Github Packages
 on:
   push:
     branches:
-      - mvp/docker-stuff
+      - main
 
 jobs:
   buildAndPush:
@@ -14,10 +14,10 @@ jobs:
       - name: Docker login
         run: docker login docker.pkg.github.com -u $GITHUB_ACTOR --password ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build api Docker image
+      - name: Build content-api Docker image
         run: |
           docker build --tag "docker.pkg.github.com/franchise-tracker/content-api/content-api:dev" .
 
-      - name: Push api Docker image
+      - name: Push content-api Docker image
         run: |
           docker push "docker.pkg.github.com/franchise-tracker/content-api/content-api:dev"
