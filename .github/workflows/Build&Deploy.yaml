@@ -1,0 +1,23 @@
+name: Build & Push to Github Packages
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  buildAndPush:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Docker login
+        run: docker login docker.pkg.github.com -u $GITHUB_ACTOR --password ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build content-api Docker image
+        run: |
+          docker build --tag "docker.pkg.github.com/franchise-tracker/content-api/content-api:dev" .
+
+      - name: Push content-api Docker image
+        run: |
+          docker push "docker.pkg.github.com/franchise-tracker/content-api/content-api:dev"

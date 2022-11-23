@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: content-api
+    env_file:
+      - .env
+    ports:
+      - "3001:3001"
