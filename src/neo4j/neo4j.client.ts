@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import neo4j, {
-  Driver,
-  QueryResult,
-  ResultSummary,
-  Result,
-} from 'neo4j-driver';
+import neo4j, { Driver, QueryResult, PathSegment } from 'neo4j-driver';
 import { Config } from 'src/config';
 
 @Injectable()
@@ -20,15 +15,38 @@ export class Neo4jClient {
     this.client = neo4j.driver(uri, neo4j.auth.basic(user, password));
   }
 
-  public async query<TParameters>(query: string, parameters: TParameters) {
+  private parseResult(result: QueryResult): PathSegment[] {
+    if (!result) {
+      return [];
+    }
+
+    const record = result.records[0];
+
+    if (!record) {
+      return [];
+    }
+
+    const firstRecord = record.get(0);
+
+    if (!firstRecord) {
+      return [];
+    }
+
+    return firstRecord.segments || [];
+  }
+
+  public async query<TParameters>(
+    query: string,
+    parameters: TParameters,
+  ): Promise<PathSegment[]> {
     const session = this.client.session({ database: 'neo4j' });
 
     try {
-      const result = await session.executeRead((tx) =>
+      const result = await session.executeRead<QueryResult>((tx) =>
         tx.run(query, parameters),
       );
 
-      return result;
+      return this.parseResult(result);
     } catch (error) {
       console.error(`Something went wrong: ${error}`);
     } finally {
