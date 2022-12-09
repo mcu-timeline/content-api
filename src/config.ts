@@ -5,8 +5,8 @@ export type Config = {
   NEO4J_URI: string;
   NEO4J_USER: string;
   NEO4J_PASSWORD: string;
-  AUTH0_ISSUER_URL: string
-  AUTH0_AUDIENCE: string
+  AUTH0_ISSUER_URL: string;
+  AUTH0_AUDIENCE: string;
 };
 
 export const config = (): Config => ({
