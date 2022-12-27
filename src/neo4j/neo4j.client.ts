@@ -8,9 +8,9 @@ export class Neo4jClient {
   public client: Driver;
 
   constructor(private configService: ConfigService<Config>) {
-    const uri = this.configService.get('NEO4J_URI');
-    const user = this.configService.get('NEO4J_USER');
-    const password = this.configService.get('NEO4J_PASSWORD');
+    const uri = this.configService.get('NEO4J_URI', { infer: true });
+    const user = this.configService.get('NEO4J_USER', { infer: true });
+    const password = this.configService.get('NEO4J_PASSWORD', { infer: true });
 
     this.client = neo4j.driver(uri, neo4j.auth.basic(user, password));
   }
@@ -26,6 +26,8 @@ export class Neo4jClient {
       return [];
     }
 
+    // TODO: Add generic type for this line
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const firstRecord = record.get(0);
 
     if (!firstRecord) {

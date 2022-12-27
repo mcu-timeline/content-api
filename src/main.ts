@@ -9,7 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const configService = app.get(ConfigService<Config>);
-  const port = configService.get('PORT');
+  const port = configService.get('PORT', { infer: true });
 
   /*
    * TODO: Enable auth guard before going prod.
