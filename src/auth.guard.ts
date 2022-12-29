@@ -1,19 +1,19 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-
-import { verify } from 'jsonwebtoken';
-import * as jwksClient from 'jwks-rsa';
 import { ConfigService } from '@nestjs/config';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { GetPublicKeyOrSecret, verify } from 'jsonwebtoken';
+import * as jwksClient from 'jwks-rsa';
 
 import { Config } from './config';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { AuthContext, isJWTPayload } from './auth.types';
 
 @Injectable()
 export class JwtAuthGuard {
   constructor(private configService: ConfigService<Config>) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = GqlExecutionContext.create(context);
-    const headers = ctx?.getArgByIndex(2)?.req?.headers;
+    const ctx = GqlExecutionContext.create(context).getContext<AuthContext>();
+    const headers = ctx.req?.headers;
 
     if (!headers) {
       return false;
@@ -26,12 +26,12 @@ export class JwtAuthGuard {
     }
 
     const client = jwksClient({
-      jwksUri: `${this.configService.get(
-        'AUTH0_ISSUER_URL',
-      )}.well-known/jwks.json`,
+      jwksUri: `${this.configService.get('AUTH0_ISSUER_URL', {
+        infer: true,
+      })}.well-known/jwks.json`,
     });
 
-    const getKey = (header, callback): void => {
+    const getKey: GetPublicKeyOrSecret = (header, callback): void => {
       client.getSigningKey(
         header.kid,
         (error: Error, key: jwksClient.RsaSigningKey) => {
@@ -46,8 +46,8 @@ export class JwtAuthGuard {
         token,
         getKey,
         {
-          audience: this.configService.get('AUTH0_AUDIENCE'),
-          issuer: this.configService.get('AUTH0_ISSUER_URL'),
+          audience: this.configService.get('AUTH0_AUDIENCE', { infer: true }),
+          issuer: this.configService.get('AUTH0_ISSUER_URL', { infer: true }),
           algorithms: ['RS256'],
         },
         (error, decoded) => {
@@ -63,6 +63,11 @@ export class JwtAuthGuard {
 
     const decodedToken = await decodedTokenPromise;
 
-    return !!decodedToken;
+    if (isJWTPayload(decodedToken)) {
+      ctx.userId = decodedToken.sub;
+      return true;
+    }
+
+    return false;
   }
 }
