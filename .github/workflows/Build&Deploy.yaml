@@ -16,8 +16,8 @@ jobs:
 
       - name: Build content-api Docker image
         run: |
-          docker build --tag "docker.pkg.github.com/franchise-tracker/content-api/content-api:dev" .
+          docker build --tag "docker.pkg.github.com/mcu-timeline/content-api/content-api:dev" .
 
       - name: Push content-api Docker image
         run: |
-          docker push "docker.pkg.github.com/franchise-tracker/content-api/content-api:dev"
+          docker push "docker.pkg.github.com/mcu-timeline/content-api/content-api:dev"
