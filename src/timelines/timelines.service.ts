@@ -8,8 +8,12 @@ import { isValidPathSegment } from './timelines.types';
 export class TimelinesService {
   constructor(private neo4j: Neo4jClient) {}
 
-  private mapResults = (segments: PathSegment[]): Movie[] =>
-    segments.map((segment) => {
+  private mapResults = (segments: PathSegment[]): Movie[] => {
+    if (!segments) {
+      return [];
+    }
+
+    return segments.map((segment) => {
       if (isValidPathSegment(segment)) {
         return {
           id: segment.start.elementId,
@@ -18,6 +22,7 @@ export class TimelinesService {
         };
       }
     });
+  };
 
   private async getFirstItemsOfTimeline(): Promise<Movie[]> {
     const getFirstItemsQuery = `

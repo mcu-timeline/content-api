@@ -34,7 +34,15 @@ export class Neo4jClient {
       return [];
     }
 
-    return firstRecord.segments || [];
+    // TODO: Add generic type for this line
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const segments = firstRecord.segments;
+
+    if (!segments) {
+      return [];
+    }
+
+    return segments;
   }
 
   public async query<TParameters>(
