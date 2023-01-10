@@ -3,16 +3,13 @@ import { Neo4jClient } from '../neo4j';
 import { Movie } from '../graphql.schema';
 import { PathSegment } from 'neo4j-driver';
 import { isValidPathSegment } from './timelines.types';
+import { MoviesNotFoundException } from './timelines.exceptions';
 
 @Injectable()
 export class TimelinesService {
   constructor(private neo4j: Neo4jClient) {}
 
   private mapResults = (segments: PathSegment[]): Movie[] => {
-    if (!segments) {
-      return [];
-    }
-
     return segments.map((segment) => {
       if (isValidPathSegment(segment)) {
         return {
@@ -34,6 +31,11 @@ export class TimelinesService {
     `;
 
     const result = await this.neo4j.query(getFirstItemsQuery, {});
+
+    if (!result) {
+      throw new MoviesNotFoundException();
+    }
+
     return this.mapResults(result);
   }
 
@@ -51,6 +53,11 @@ export class TimelinesService {
       getItemsStartingFormGivenName,
       { name: movieName },
     );
+
+    if (!result) {
+      throw new MoviesNotFoundException();
+    }
+
     return this.mapResults(result);
   }
 

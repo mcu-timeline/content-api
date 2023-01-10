@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import neo4j, { Driver, QueryResult, PathSegment } from 'neo4j-driver';
 import { Config } from 'src/config';
+import { FailedToExecuteQueryException } from './neo4j.exceptions';
 
 @Injectable()
 export class Neo4jClient {
@@ -58,7 +59,7 @@ export class Neo4jClient {
 
       return this.parseResult(result);
     } catch (error) {
-      console.error(`Something went wrong: ${error}`);
+      throw new FailedToExecuteQueryException();
     } finally {
       await session.close();
     }

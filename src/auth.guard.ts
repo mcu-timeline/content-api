@@ -7,6 +7,12 @@ import * as jwksClient from 'jwks-rsa';
 import { Config } from './config';
 import { AuthContext, isJWTPayload } from './auth.types';
 
+export class AuthorizationException extends Error {
+  constructor() {
+    super('User is not authorized to access this resource');
+  }
+}
+
 @Injectable()
 export class JwtAuthGuard {
   constructor(private configService: ConfigService<Config>) {}
@@ -41,33 +47,37 @@ export class JwtAuthGuard {
       );
     };
 
-    const decodedTokenPromise = new Promise((resolve, reject) => {
-      verify(
-        token,
-        getKey,
-        {
-          audience: this.configService.get('AUTH0_AUDIENCE', { infer: true }),
-          issuer: this.configService.get('AUTH0_ISSUER_URL', { infer: true }),
-          algorithms: ['RS256'],
-        },
-        (error, decoded) => {
-          if (error) {
-            reject(error);
-          }
-          if (decoded) {
-            resolve(decoded);
-          }
-        },
-      );
-    });
+    try {
+      const decodedTokenPromise = new Promise((resolve, reject) => {
+        verify(
+          token,
+          getKey,
+          {
+            audience: this.configService.get('AUTH0_AUDIENCE', { infer: true }),
+            issuer: this.configService.get('AUTH0_ISSUER_URL', { infer: true }),
+            algorithms: ['RS256'],
+          },
+          (error, decoded) => {
+            if (error) {
+              reject(error);
+            }
+            if (decoded) {
+              resolve(decoded);
+            }
+          },
+        );
+      });
 
-    const decodedToken = await decodedTokenPromise;
+      const decodedToken = await decodedTokenPromise;
 
-    if (isJWTPayload(decodedToken)) {
-      ctx.userId = decodedToken.sub;
-      return true;
+      if (isJWTPayload(decodedToken)) {
+        ctx.userId = decodedToken.sub;
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      throw new AuthorizationException();
     }
-
-    return false;
   }
 }
