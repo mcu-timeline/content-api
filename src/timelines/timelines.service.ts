@@ -13,7 +13,7 @@ export class TimelinesService {
     return segments.map((segment) => {
       if (isValidPathSegment(segment)) {
         return {
-          id: segment.start.elementId,
+          id: segment.start.properties.id,
           name: segment.start.properties.title,
           duration: segment.start.properties.duration,
         };

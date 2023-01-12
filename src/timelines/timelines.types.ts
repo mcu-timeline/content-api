@@ -3,6 +3,7 @@ import { PathSegment } from 'neo4j-driver';
 type Segment = PathSegment & {
   start: {
     properties: {
+      id: string;
       title: string;
       duration: string;
     };
