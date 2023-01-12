@@ -13,7 +13,7 @@ export class TimelinesService {
     return segments.map((segment) => {
       if (isValidPathSegment(segment)) {
         return {
-          id: segment.start.elementId,
+          id: segment.start.properties.id,
           name: segment.start.properties.title,
           duration: segment.start.properties.duration,
         };
@@ -40,18 +40,18 @@ export class TimelinesService {
   }
 
   private async getItemsStartingFromGiveName(
-    movieName: string,
+    movieId: string,
   ): Promise<Movie[]> {
     const getItemsStartingFormGivenName = `
-      MATCH a=(m:Movie)-[:WATCH_NEXT*0..3]->(:Movie {title: $name})-[:WATCH_NEXT*0..3{timeline: 'Full'}]->(:Movie)
+      MATCH a=(m:Movie)-[:WATCH_NEXT*0..3]->(:Movie {id: $name})-[:WATCH_NEXT*0..3{timeline: 'Full'}]->(:Movie)
       RETURN a
       ORDER BY length(a) DESC
       LIMIT 1
     `;
 
-    const result = await this.neo4j.query<{ name: string }>(
+    const result = await this.neo4j.query<{ id: string }>(
       getItemsStartingFormGivenName,
-      { name: movieName },
+      { id: movieId },
     );
 
     if (!result) {
@@ -61,11 +61,11 @@ export class TimelinesService {
     return this.mapResults(result);
   }
 
-  async getTimeline(movieName?: string): Promise<Movie[]> {
-    if (!movieName) {
+  async getTimeline(movieId?: string): Promise<Movie[]> {
+    if (!movieId) {
       return this.getFirstItemsOfTimeline();
     }
 
-    return this.getItemsStartingFromGiveName(movieName);
+    return this.getItemsStartingFromGiveName(movieId);
   }
 }
