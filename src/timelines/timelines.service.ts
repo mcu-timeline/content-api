@@ -43,7 +43,7 @@ export class TimelinesService {
     movieId: string,
   ): Promise<Movie[]> {
     const getItemsStartingFormGivenName = `
-      MATCH a=(m:Movie)-[:WATCH_NEXT*0..3]->(:Movie {id: $name})-[:WATCH_NEXT*0..3{timeline: 'Full'}]->(:Movie)
+      MATCH a=(m:Movie)-[:WATCH_NEXT*0..3]->(:Movie {id: $id})-[:WATCH_NEXT*0..3{timeline: 'Full'}]->(:Movie)
       RETURN a
       ORDER BY length(a) DESC
       LIMIT 1
