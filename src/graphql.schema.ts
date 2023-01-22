@@ -15,8 +15,19 @@ export interface IQuery {
 
 export interface Movie {
   id: string;
-  name: string;
+  title: string;
   duration: string;
+  tags: string[];
+  image: string;
+  imageHero: string;
+  description: string;
+  note: string;
+  characters: Character[];
+}
+
+export interface Character {
+  name: string;
+  image: string;
 }
 
 type Nullable<T> = T | null;

@@ -4,8 +4,17 @@ type Query {
 
 type Movie @key(fields: "id") {
   id: String!
-  name: String!
+  title: String!
   duration: String!
+  tags: [String]!
+  image: String!
+  imageHero: String!
+  description: String!
+  note: String!
+  characters: [Character]!
 }
 
-
+type Character {
+  name: String!
+  image: String!
+}
