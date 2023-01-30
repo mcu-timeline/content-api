@@ -10,12 +10,13 @@ CALL {
     prev.tags as tags,
     prev.image as image,
     prev.imageHero as imageHero,
+    prev.imageCenter as imageCenter,
     prev.description as description,
     prev.note as note,
     collect(c.name) as characters,
     collect(c.image) as charactersImages
 }
-RETURN id, title, duration, tags, image, imageHero, description, note, characters, charactersImages
+RETURN id, title, duration, tags, image, imageHero, imageCenter, description, note, characters, charactersImages
 ORDER BY length(sequence) DESC
 UNION
 MATCH (current:Movie {id: $id})<-[:APPEARS]-(c:Character)
@@ -26,6 +27,7 @@ RETURN
   current.tags as tags,
   current.image as image,
   current.imageHero as imageHero,
+  current.imageCenter as imageCenter,
   current.description as description,
   current.note as note,
   collect(c.name) as characters,
@@ -42,12 +44,13 @@ CALL {
     next.tags as tags,
     next.image as image,
     next.imageHero as imageHero,
+    next.imageCenter as imageCenter,
     next.description as description,
     next.note as note,
     collect(c.name) as characters,
     collect(c.image) as charactersImages
 }
-RETURN id, title, duration, tags, image, imageHero, description, note, characters, charactersImages
+RETURN id, title, duration, tags, image, imageHero, imageCenter, description, note, characters, charactersImages
 ORDER BY length(sequence) ASC
 `;
 
@@ -61,6 +64,7 @@ RETURN
     current.tags as tags,
     current.image as image,
     current.imageHero as imageHero,
+    current.imageCenter as imageCenter,
     current.description as description,
     current.note as note,
     collect(c.name) as characters,
@@ -78,11 +82,12 @@ CALL {
         next.tags as tags,
         next.image as image,
         next.imageHero as imageHero,
+        next.imageCenter as imageCenter,
         next.description as description,
         next.note as note,
-        collect(c.image) as characters,
+        collect(c.name) as characters,
         collect(c.image) as charactersImages
 }
-RETURN id, title, duration, tags, image, imageHero, description, note, characters, charactersImages
+RETURN id, title, duration, tags, image, imageHero, imageCenter, description, note, characters, charactersImages
 ORDER BY length(sequence) ASC
 `;

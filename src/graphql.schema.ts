@@ -20,6 +20,7 @@ export interface Movie {
   tags: string[];
   image: string;
   imageHero: string;
+  imageCenter: Nullable<number>;
   description: string;
   note: string;
   characters: Character[];

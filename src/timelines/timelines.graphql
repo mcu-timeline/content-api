@@ -9,6 +9,7 @@ type Movie @key(fields: "id") {
   tags: [String]!
   image: String!
   imageHero: String!
+  imageCenter: Float
   description: String!
   note: String!
   characters: [Character]!

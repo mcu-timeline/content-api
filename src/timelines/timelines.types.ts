@@ -5,6 +5,7 @@ export type DBMovie = {
   tags: string;
   image: string;
   imageHero: string;
+  imageCenter: number | null;
   description: string;
   note: string;
   characters: string[];

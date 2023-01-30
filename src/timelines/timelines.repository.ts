@@ -18,6 +18,7 @@ export class TimelinesRepository {
       tags: movie.tags.split(', '),
       image: movie.image,
       imageHero: movie.imageHero,
+      imageCenter: movie.imageCenter,
       description: movie.description,
       note: movie.note,
       characters: movie.characters.map((character, index) => ({
