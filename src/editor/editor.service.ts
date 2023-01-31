@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Neo4jClient } from '../neo4j';
 import { Content } from './editor.types';
+import { EditorRepository } from './editor.repository';
 
 @Injectable()
 export class EditorService {
-  constructor(private neo4j: Neo4jClient) {}
+  constructor(private editorRepository: EditorRepository) {}
 
   async getContent(): Promise<Content> {
+    const characters = await this.editorRepository.getCharacters();
     return {
-      characters: [
-        {
-          id: '1',
-        },
-      ],
+      characters,
     };
   }
 }
