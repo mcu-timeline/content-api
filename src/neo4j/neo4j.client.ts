@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import neo4j, { Driver, QueryResult, PathSegment } from 'neo4j-driver';
+import neo4j, { Driver, QueryResult } from 'neo4j-driver';
 import { Config } from 'src/config';
 import { FailedToExecuteQueryException } from './neo4j.exceptions';
 
@@ -16,48 +16,31 @@ export class Neo4jClient {
     this.client = neo4j.driver(uri, neo4j.auth.basic(user, password));
   }
 
-  private parseResult(result: QueryResult): PathSegment[] {
+  private parseResult<TResult>(result: QueryResult<TResult>): TResult[] {
     if (!result) {
       return [];
     }
 
-    const record = result.records[0];
-
-    if (!record) {
-      return [];
-    }
-
-    // TODO: Add generic type for this line
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const firstRecord = record.get(0);
-
-    if (!firstRecord) {
-      return [];
-    }
-
-    // TODO: Add generic type for this line
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const segments = firstRecord.segments;
-
-    if (!segments) {
-      return [];
-    }
-
-    return segments;
+    return result.records.map((record) =>
+      record.keys.reduce<TResult>((result, key) => {
+        result[key] = record.get(key);
+        return result;
+      }, {} as TResult),
+    );
   }
 
-  public async query<TParameters>(
+  public async query<TParameters, TResult>(
     query: string,
     parameters: TParameters,
-  ): Promise<PathSegment[]> {
+  ): Promise<TResult[]> {
     const session = this.client.session({ database: 'neo4j' });
 
     try {
-      const result = await session.executeRead<QueryResult>((tx) =>
+      const result = await session.executeRead<QueryResult<TResult>>((tx) =>
         tx.run(query, parameters),
       );
 
-      return this.parseResult(result);
+      return this.parseResult<TResult>(result);
     } catch (error) {
       throw new FailedToExecuteQueryException();
     } finally {

@@ -1,10 +1,17 @@
 type Movie @key(fields: "id") {
   id: String!
-  name: String!
+  title: String!
   duration: String!
+  tags: [String]!
+  image: String!
+  imageHero: String!
+  imageCenter: Float
+  description: String!
+  note: String!
+  characters: [Character]!
 }
 
-type Query {
-  timeline(currentlyWatching: String): [Movie]
+type Character {
+  name: String!
+  image: String!
 }
-
