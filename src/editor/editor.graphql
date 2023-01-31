@@ -1,0 +1,12 @@
+type Character {
+  id: String!
+}
+
+type Content {
+  characters: [Character!]!
+}
+
+type Query {
+  content: Content
+}
+

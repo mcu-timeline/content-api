@@ -1,18 +1,20 @@
-import { Module } from '@nestjs/common';
 import { join } from 'path';
 
+import { Module } from '@nestjs/common';
+
 import { GraphQLModule } from '@nestjs/graphql';
+import { ConfigModule } from '@nestjs/config';
 import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
+
 import { TimelinesModule } from './timelines/timelines.module';
-import { ConfigModule } from '@nestjs/config';
 import { config } from './config';
+import { EditorModule } from './editor';
 
 @Module({
   imports: [
-    TimelinesModule,
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       typePaths: ['./**/*.graphql'],
@@ -23,6 +25,8 @@ import { config } from './config';
     ConfigModule.forRoot({
       load: [config],
     }),
+    TimelinesModule,
+    EditorModule,
   ],
   controllers: [],
 })
