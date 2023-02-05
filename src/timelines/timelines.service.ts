@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Movie } from '../graphql.schema';
-import { MoviesNotFoundException } from './timelines.exceptions';
+import { Movie, Timeline } from '../graphql.schema';
+import {
+  MoviesNotFoundException,
+  TimelinesNotFoundException,
+} from './timelines.exceptions';
 import { TimelinesRepository } from './timelines.repository';
 
 @Injectable()
 export class TimelinesService {
   constructor(private timelinesRepository: TimelinesRepository) {}
 
-  private async getFirstItemsOfTimeline(): Promise<Movie[]> {
+  private async getFirstItemsOfTimeline(timelineId: string): Promise<Movie[]> {
     const result = await this.timelinesRepository.getFirstItemsOfTimeline(
-      'Full',
+      timelineId,
     );
 
     if (!result.length) {
@@ -20,10 +23,11 @@ export class TimelinesService {
   }
 
   private async getItemsStartingFromGiveName(
+    timelineId: string,
     movieId: string,
   ): Promise<Movie[]> {
     const result = await this.timelinesRepository.getItemsStartingFromGivenId(
-      'Full',
+      timelineId,
       movieId,
     );
 
@@ -34,11 +38,21 @@ export class TimelinesService {
     return result;
   }
 
-  async getTimeline(movieId?: string): Promise<Movie[]> {
+  async getTimeline(timelineId: string, movieId?: string): Promise<Movie[]> {
     if (!movieId) {
-      return this.getFirstItemsOfTimeline();
+      return this.getFirstItemsOfTimeline(timelineId);
     }
 
-    return this.getItemsStartingFromGiveName(movieId);
+    return this.getItemsStartingFromGiveName(timelineId, movieId);
+  }
+
+  async getTimelines(): Promise<Timeline[]> {
+    const result = await this.timelinesRepository.getTimelines();
+
+    if (!result.length) {
+      throw new TimelinesNotFoundException();
+    }
+
+    return result;
   }
 }

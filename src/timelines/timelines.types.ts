@@ -11,3 +11,10 @@ export type DBMovie = {
   characters: string[];
   charactersImages: string[];
 };
+
+export type DBTimeline = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+};

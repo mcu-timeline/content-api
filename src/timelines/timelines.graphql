@@ -1,5 +1,6 @@
 type Query {
-  timeline(currentlyWatching: String): [Movie]
+  timeline(timeline: String!, currentlyWatching: String): [Movie]
+  timelines: [Timeline]
 }
 
 type Movie @key(fields: "id") {
@@ -17,5 +18,12 @@ type Movie @key(fields: "id") {
 
 type Character {
   name: String!
+  image: String!
+}
+
+type Timeline @key(fields: "id") {
+  id: String!
+  name: String!
+  description: String!
   image: String!
 }
