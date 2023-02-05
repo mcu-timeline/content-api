@@ -3,3 +3,9 @@ export class MoviesNotFoundException extends Error {
     super('Movies not found');
   }
 }
+
+export class TimelinesNotFoundException extends Error {
+  constructor() {
+    super('Timelines not found');
+  }
+}

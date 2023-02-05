@@ -1,5 +1,5 @@
 export const GET_MOVIES_BY_ID = `
-MATCH sequence=(current:Movie {id: $id})<-[:WATCH_NEXT*1..3{timeline: $timeline}]-(prev:Movie)
+MATCH sequence=(current:Movie {id: $id})<-[:WATCH_NEXT*1..3{timeline: $timelineId}]-(prev:Movie)
 CALL {
   WITH prev
   MATCH (prev)<-[:APPEARS]-(c:Character)
@@ -33,7 +33,7 @@ RETURN
   collect(c.name) as characters,
   collect(c.image) as charactersImages
 UNION
-MATCH sequence=(current:Movie {id: $id})-[:WATCH_NEXT*1..3{timeline: $timeline}]->(next:Movie)
+MATCH sequence=(current:Movie {id: $id})-[:WATCH_NEXT*1..3{timeline: $timelineId}]->(next:Movie)
 CALL {
   WITH next
   MATCH (next)<-[:APPEARS]-(c:Character)
@@ -55,8 +55,8 @@ ORDER BY length(sequence) ASC
 `;
 
 export const GET_FIRST_MOVIES = `
-MATCH (c:Character)-[:APPEARS]->(current:Movie)-[:WATCH_NEXT{timeline: $timeline}]->(:Movie)
-WHERE NOT (:Movie)-[:WATCH_NEXT{timeline: $timeline}]->(current)
+MATCH (c:Character)-[:APPEARS]->(current:Movie)-[:WATCH_NEXT{timeline: $timelineId}]->(:Movie)
+WHERE NOT (:Movie)-[:WATCH_NEXT{timeline: $timelineId}]->(current)
 RETURN
     current.id as id,
     current.title as title,
@@ -70,8 +70,8 @@ RETURN
     collect(c.name) as characters,
     collect(c.image) as charactersImages
 UNION
-MATCH sequence=(current:Movie)-[:WATCH_NEXT*1..3{timeline: $timeline}]->(next:Movie)
-WHERE NOT (:Movie)-[:WATCH_NEXT{timeline: $timeline}]->(current)
+MATCH sequence=(current:Movie)-[:WATCH_NEXT*1..3{timeline: $timelineId}]->(next:Movie)
+WHERE NOT (:Movie)-[:WATCH_NEXT{timeline: $timelineId}]->(current)
 CALL {
     WITH next
     MATCH (next)<-[:APPEARS]-(c:Character)
@@ -90,4 +90,9 @@ CALL {
 }
 RETURN id, title, duration, tags, image, imageHero, imageCenter, description, note, characters, charactersImages
 ORDER BY length(sequence) ASC
+`;
+
+export const GET_TIMELINES = `
+MATCH (t:Timeline)
+RETURN t.id as id, t.name as name, t.description as description, t.image as image
 `;

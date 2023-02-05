@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { Neo4jClient } from '../neo4j';
-import { Movie } from '../graphql.schema';
-import { DBMovie } from './timelines.types';
+import { Movie, Timeline } from '../graphql.schema';
+import { DBMovie, DBTimeline } from './timelines.types';
 import { MoviesNotFoundException } from './timelines.exceptions';
-import { GET_FIRST_MOVIES, GET_MOVIES_BY_ID } from './timelines.queries';
+import {
+  GET_FIRST_MOVIES,
+  GET_MOVIES_BY_ID,
+  GET_TIMELINES,
+} from './timelines.queries';
 
 @Injectable()
 export class TimelinesRepository {
@@ -27,10 +31,10 @@ export class TimelinesRepository {
       })),
     }));
 
-  async getFirstItemsOfTimeline(timeline: string): Promise<Movie[]> {
-    const result = await this.neo4j.query<{ timeline: string }, DBMovie>(
+  async getFirstItemsOfTimeline(timelineId: string): Promise<Movie[]> {
+    const result = await this.neo4j.query<{ timelineId: string }, DBMovie>(
       GET_FIRST_MOVIES,
-      { timeline },
+      { timelineId },
     );
 
     if (!result) {
@@ -41,18 +45,31 @@ export class TimelinesRepository {
   }
 
   async getItemsStartingFromGivenId(
-    timeline: string,
+    timelineId: string,
     movieId: string,
   ): Promise<Movie[]> {
     const result = await this.neo4j.query<
-      { timeline: string; id: string },
+      { timelineId: string; id: string },
       DBMovie
-    >(GET_MOVIES_BY_ID, { timeline, id: movieId });
+    >(GET_MOVIES_BY_ID, { timelineId, id: movieId });
 
     if (!result) {
       throw new MoviesNotFoundException();
     }
 
     return this.mapResults(result);
+  }
+
+  async getTimelines(): Promise<Timeline[]> {
+    const result = await this.neo4j.query<null, DBTimeline>(
+      GET_TIMELINES,
+      null,
+    );
+
+    if (!result) {
+      throw new MoviesNotFoundException();
+    }
+
+    return result;
   }
 }
